@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Antigravity AI – Intelligent Speech & Text Reconstructor</title>
+  <meta name="description" content="State-of-the-art Natural Language Understanding, Intent Reconstruction, and Communication Intelligence system to reconstruct poorly written or spoken text.">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- CSS -->
+  <link rel="stylesheet" href="/static/css/styles.css">
+  <!-- Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="dark-theme">
+  <div class="app-layout">
+    
+    <!-- Sidebar: Saved History Panel -->
+    <aside class="sidebar-panel">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <i data-lucide="sparkles"></i>
+          <span>Antigravity AI</span>
+        </div>
+      </div>
+      
+      <div class="sidebar-content">
+        <div class="sidebar-section-title">
+          <i data-lucide="history"></i>
+          <span>Reconstruction History</span>
+        </div>
+        <div id="history-loading" class="history-spinner-container">
+          <div class="spinner-mini"></div>
+        </div>
+        <div id="history-empty" class="history-empty hidden">
+          <p>No saved reconstructions yet. Try processing some text!</p>
+        </div>
+        <div id="history-list" class="history-list hidden">
+          <!-- Dynamic history item cards will load here -->
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Workspace Container -->
+    <div class="main-container">
+      
+      <!-- App Header -->
+      <header class="app-header">
+        <div class="header-branding">
+          <h1>Speech & Text Reconstruction Engine</h1>
+          <p class="subtitle">Deep NLU and Intent Recovery Pipeline</p>
+        </div>
+        
+        <div class="header-actions">
+          <!-- Theme Switcher Toggle -->
+          <button id="theme-toggle-btn" class="icon-btn" title="Toggle Light/Dark Theme">
+            <i data-lucide="sun"></i>
+          </button>
+          
+          <div id="api-status-badge" class="status-badge sandbox">
+            <span class="status-dot"></span>
+            <span class="status-label">Sandbox Mode</span>
+          </div>
+          
+          <button id="open-settings-btn" class="icon-btn" title="Engine Settings">
+            <i data-lucide="settings"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Columns Grid -->
+      <main class="app-grid">
+        <!-- Configuration & Presets Column -->
+        <div class="control-column">
+          <!-- Configuration Card -->
+          <section class="glass-card config-card">
+            <div class="card-header">
+              <i data-lucide="sliders-horizontal"></i>
+              <h2>Configuration</h2>
+            </div>
+            <div class="card-content">
+              <div class="form-group">
+                <label for="reconstruction-mode">Target Context / Style</label>
+                <div class="select-wrapper">
+                  <select id="reconstruction-mode">
+                    <option value="business" selected>Business / Professional</option>
+                    <option value="academic">Academic Writing</option>
+                    <option value="casual">Casual / Friendly</option>
+                  </select>
+                  <i data-lucide="chevron-down" class="select-chevron"></i>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="language-profile">Language Profile</label>
+                <div class="select-wrapper">
+                  <select id="language-profile">
+                    <option value="auto" selected>Auto Detect</option>
+                    <option value="english">English Only</option>
+                    <option value="multilingual">Multilingual (Mixed English/Hindi/Telugu/Tamil/Malayalam)</option>
+                  </select>
+                  <i data-lucide="chevron-down" class="select-chevron"></i>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="slider-header">
+                  <label for="confidence-threshold">Confidence Threshold</label>
+                  <span id="confidence-val">80%</span>
+                </div>
+                <input type="range" id="confidence-threshold" min="50" max="100" value="80" class="slider-input">
+                <p class="input-hint">Reconstructions below this score will trigger clarification prompts.</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Presets Card -->
+          <section class="glass-card presets-card">
+            <div class="card-header">
+              <i data-lucide="bookmark"></i>
+              <h2>Input Presets & Scenarios</h2>
+            </div>
+            <div class="card-content">
+              <div class="presets-list">
+                <button class="preset-btn" data-preset="speech-fillers">
+                  <span class="preset-badge voice">Speech</span>
+                  <span class="preset-title">Excessive Fillers & Glitches</span>
+                </button>
+                
+                <button class="preset-btn" data-preset="telugu-mixed">
+                  <span class="preset-badge multilingual">Mixed</span>
+                  <span class="preset-title">English + Telugu Mix</span>
+                </button>
+                
+                <button class="preset-btn" data-preset="hindi-mixed">
+                  <span class="preset-badge multilingual">Mixed</span>
+                  <span class="preset-title">English + Hindi Mix</span>
+                </button>
+
+                <button class="preset-btn" data-preset="extreme-typos">
+                  <span class="preset-badge typo">Typo</span>
+                  <span class="preset-title">Typos & Broken Grammar</span>
+                </button>
+
+                <button class="preset-btn" data-preset="incomplete-ocr">
+                  <span class="preset-badge ocr">OCR</span>
+                  <span class="preset-title">OCR Fragmented Input</span>
+                </button>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- Input Workspace Column -->
+        <div class="input-column">
+          <section class="glass-card workspace-card input-card">
+            <div class="card-header">
+              <div class="header-title-group">
+                <i data-lucide="keyboard"></i>
+                <h2>Original Input</h2>
+              </div>
+              <div class="input-stats">
+                <span id="char-count">0 characters</span>
+              </div>
+            </div>
+            
+            <div class="card-content input-container">
+              <!-- Recording Canvas Overlay (hidden by default) -->
+              <div id="recording-overlay" class="recording-overlay hidden">
+                <div class="recorder-visualizer">
+                  <svg id="audio-wave" viewBox="0 0 200 60">
+                    <path d="M 10 30 Q 30 15 50 30 T 90 30 T 130 30 T 170 30 T 190 30" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"></path>
+                    <path d="M 10 30 Q 30 20 50 30 T 90 30 T 130 30 T 170 30 T 190 30" fill="none" stroke="var(--accent-dim)" stroke-width="1.5" stroke-linecap="round" opacity="0.5"></path>
+                  </svg>
+                </div>
+                <div class="recording-details">
+                  <span class="pulse-dot red"></span>
+                  <span id="recording-status">Recording Live Speech...</span>
+                  <span id="recording-time">00:00</span>
+                </div>
+                <div class="recording-controls">
+                  <button id="cancel-recording-btn" class="glass-btn secondary">Cancel</button>
+                  <button id="stop-recording-btn" class="glass-btn primary danger">Stop & Analyze</button>
+                </div>
+              </div>
+
+              <textarea id="raw-input-textarea" placeholder="Type text, paste OCR content, load a preset, record speech, or drag and drop an audio file here..."></textarea>
+              
+              <!-- File Drag Drop & Upload Status -->
+              <div id="file-upload-status" class="file-upload-status hidden">
+                <i data-lucide="paperclip"></i>
+                <span id="upload-filename">audio_file.wav</span>
+                <button id="remove-uploaded-file-btn" class="icon-btn-mini" title="Remove File">
+                  <i data-lucide="trash-2"></i>
+                </button>
+              </div>
+
+              <div class="input-actions-bar">
+                <div class="media-actions">
+                  <button id="record-speech-btn" class="media-btn" title="Record Audio File">
+                    <i data-lucide="mic"></i>
+                    <span>Record Voice</span>
+                  </button>
+                  <button id="live-speech-btn" class="media-btn" title="Real-time Speech Recognition">
+                    <i data-lucide="audio-lines"></i>
+                    <span>Live Speech</span>
+                  </button>
+                  
+                  <!-- Upload File Input -->
+                  <label class="media-btn file-upload-label" title="Upload Audio File">
+                    <input type="file" id="audio-file-input" accept="audio/*" class="hidden">
+                    <i data-lucide="upload"></i>
+                    <span>Upload Audio</span>
+                  </label>
+                </div>
+                
+                <div class="control-actions">
+                  <button id="clear-input-btn" class="glass-btn secondary">Clear</button>
+                  <button id="process-btn" class="glass-btn primary">
+                    <span>Reconstruct Intent</span>
+                    <i data-lucide="arrow-right"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- Output Workspace Column -->
+        <div class="output-column">
+          <section class="glass-card workspace-card output-card">
+            <!-- Initial State (waiting) -->
+            <div id="output-state-empty" class="state-container empty-state">
+              <div class="empty-state-illustration">
+                <i data-lucide="brain-circuit"></i>
+              </div>
+              <h3>Intelligence Ready</h3>
+              <p>Provide a text sample, record voice, or upload an audio file, then click <strong>Reconstruct Intent</strong> to trigger the semantic processing pipeline.</p>
+            </div>
+
+            <!-- Loading State (Reasoning steps progress) -->
+            <div id="output-state-loading" class="state-container loading-state hidden">
+              <div class="processing-header">
+                <div class="spinner"></div>
+                <h3>Processing Pipeline Active</h3>
+                <p>Evaluating semantic signals and reconstructing original intent...</p>
+              </div>
+              
+              <!-- Animated 8 Steps Timeline -->
+              <div class="reasoning-timeline">
+                <div class="timeline-step" data-step="1">
+                  <div class="step-marker">1</div>
+                  <div class="step-content">
+                    <h4>Identify Context & Domain</h4>
+                    <p class="step-status">Analyzing origin signals...</p>
+                  </div>
+                </div>
+                <div class="timeline-step" data-step="2">
+                  <div class="step-marker">2</div>
+                  <div class="step-content">
+                    <h4>Analyze Structural Anomalies</h4>
+                    <p class="step-status">Pending...</p>
+                  </div>
+                </div>
+                <div class="timeline-step" data-step="3">
+                  <div class="step-marker">3</div>
+                  <div class="step-content">
+                    <h4>Recover Underlying Intent</h4>
+                    <p class="step-status">Pending...</p>
+                  </div>
+                </div>
+                <div class="timeline-step" data-step="4">
+                  <div class="step-marker">4</div>
+                  <div class="step-content">
+                    <h4>Semantic Reconstruction</h4>
+                    <p class="step-status">Pending...</p>
+                  </div>
+                </div>
+                <div class="timeline-step" data-step="5">
+                  <div class="step-marker">5</div>
+                  <div class="step-content">
+                    <h4>Rank Alternatives</h4>
+                    <p class="step-status">Pending...</p>
+                  </div>
+                </div>
+                <div class="timeline-step" data-step="6">
+                  <div class="step-marker">6</div>
+                  <div class="step-content">
+                    <h4>Confidence Validation</h4>
+                    <p class="step-status">Pending...</p>
+                  </div>
+                </div>
+                <div class="timeline-step" data-step="7">
+                  <div class="step-marker">7</div>
+                  <div class="step-content">
+                    <h4>Synthesize Explanations</h4>
+                    <p class="step-status">Pending...</p>
+                  </div>
+                </div>
+                <div class="timeline-step" data-step="8">
+                  <div class="step-marker">8</div>
+                  <div class="step-content">
+                    <h4>Formulate Learning Tip</h4>
+                    <p class="step-status">Pending...</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Results State -->
+            <div id="output-state-results" class="state-container results-state hidden">
+              <!-- Metadata Cards Row -->
+              <div class="results-metadata-row">
+                <div class="meta-item">
+                  <span class="meta-label">Confidence</span>
+                  <span id="res-confidence" class="meta-val highlight-green">95%</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">Language</span>
+                  <span id="res-language" class="meta-val">English</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">Input Mode</span>
+                  <span id="res-input-mode" class="meta-val">Typed Text</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">Emotion</span>
+                  <span id="res-emotion" class="meta-val">Neutral</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">Goal</span>
+                  <span id="res-goal" class="meta-val">Request</span>
+                </div>
+              </div>
+
+              <!-- Clarification Alert (Low confidence < 80) -->
+              <div id="clarification-card" class="clarification-card hidden">
+                <div class="clarification-icon">
+                  <i data-lucide="help-circle"></i>
+                </div>
+                <div class="clarification-body">
+                  <h3>Ambiguity Detected (Confidence Low)</h3>
+                  <p id="clarification-text">Could you please clarify what you meant by "..."?</p>
+                  <div class="clarification-form">
+                    <input type="text" id="clarification-input" placeholder="Type your clarification here...">
+                    <button id="submit-clarification-btn" class="glass-btn primary small">Update</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Main Outputs Tabs/Visualizers -->
+              <div class="reconstruction-showcase">
+                <!-- Reconstructions Tabs -->
+                <div class="output-tabs-row">
+                  <div class="output-tabs">
+                    <button class="tab-btn active" data-tab="natural">Natural</button>
+                    <button class="tab-btn" data-tab="professional">Professional</button>
+                    <button class="tab-btn" data-tab="formal">Academic/Formal</button>
+                  </div>
+                  <div class="showcase-actions">
+                    <!-- Download Button -->
+                    <button id="download-results-btn" class="icon-btn-small" title="Download Text Reconstruction">
+                      <i data-lucide="download"></i>
+                    </button>
+                    <!-- Copy Button -->
+                    <button id="copy-btn" class="icon-btn-small" title="Copy to Clipboard">
+                      <i data-lucide="copy"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Main Output Box -->
+                <div class="reconstruction-output-box">
+                  <div id="output-version-natural" class="output-version-content">
+                    <p class="reconstruction-text" id="natural-text">Reconstructed text goes here...</p>
+                  </div>
+                  <div id="output-version-professional" class="output-version-content hidden">
+                    <p class="reconstruction-text" id="professional-text">Professional text goes here...</p>
+                  </div>
+                  <div id="output-version-formal" class="output-version-content hidden">
+                    <p class="reconstruction-text" id="formal-text">Formal text goes here...</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Interactive Diff Viewer -->
+              <div class="diff-section">
+                <div class="section-title-bar">
+                  <h3><i data-lucide="git-diff"></i> Reconstruction Diff</h3>
+                  <span class="diff-legend">
+                    <span class="legend-del"><del>removed</del></span>
+                    <span class="legend-ins"><ins>added</ins></span>
+                  </span>
+                </div>
+                <div class="diff-container" id="diff-view">
+                  <!-- Highlighted diff goes here -->
+                </div>
+              </div>
+
+              <!-- Issues & Corrections Explanations -->
+              <div class="explainer-section">
+                <div class="accordion-item expanded" id="detected-issues-accordion">
+                  <button class="accordion-trigger">
+                    <span><i data-lucide="alert-triangle"></i> Detected Issues (<span id="issues-count">0</span>)</span>
+                    <i data-lucide="chevron-down" class="accordion-chevron"></i>
+                  </button>
+                  <div class="accordion-content">
+                    <ul id="issues-list" class="issues-list">
+                      <!-- Dynamic issues list -->
+                    </ul>
+                  </div>
+                </div>
+
+                <div class="accordion-item" id="grammar-explanations-accordion">
+                  <button class="accordion-trigger">
+                    <span><i data-lucide="book-open"></i> Grammar & Clarity Explanations</span>
+                    <i data-lucide="chevron-down" class="accordion-chevron"></i>
+                  </button>
+                  <div class="accordion-content">
+                    <div id="grammar-list" class="grammar-list">
+                      <!-- Dynamic grammar list -->
+                    </div>
+                  </div>
+                </div>
+
+                <div class="accordion-item" id="alternatives-accordion">
+                  <button class="accordion-trigger">
+                    <span><i data-lucide="git-branch"></i> Alternative Interpretations</span>
+                    <i data-lucide="chevron-down" class="accordion-chevron"></i>
+                  </button>
+                  <div class="accordion-content">
+                    <div id="alternatives-list" class="alternatives-list">
+                      <!-- Dynamic alternatives list -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Learning Card -->
+              <div class="learning-tip-card">
+                <div class="card-icon">
+                  <i data-lucide="graduation-cap"></i>
+                </div>
+                <div class="card-body">
+                  <h3>Antigravity Learning Hub</h3>
+                  <p id="learning-tip-text">Here is a quick tip to improve your daily writing...</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Settings / API Modal Overlay -->
+  <div id="settings-modal" class="modal-overlay hidden">
+    <div class="glass-card modal-container">
+      <div class="modal-header">
+        <h2><i data-lucide="settings"></i> Engine Configuration</h2>
+        <button id="close-settings-btn" class="icon-btn-small">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="modal-content">
+        <p class="modal-intro">The server processes intelligence requests on your behalf. Enter your Google Gemini credentials below to configure Flask. Clear the keys to revert to mock Sandbox preset modes.</p>
+        
+        <div class="form-group">
+          <label for="api-key-input">Gemini API Key</label>
+          <div class="api-key-input-container">
+            <input type="password" id="api-key-input" placeholder="Enter server API key...">
+            <button id="toggle-key-visibility" class="key-visibility-btn">
+              <i data-lucide="eye"></i>
+            </button>
+          </div>
+          <p class="input-hint">For security, credentials will be configured dynamically in Flask's runtime. We recommend saving these in the local <code>.env</code> file permanently.</p>
+        </div>
+
+        <div class="form-group">
+          <label for="model-selection">Gemini Model</label>
+          <div class="select-wrapper">
+            <select id="model-selection">
+              <option value="gemini-2.5-flash" selected>Gemini 2.5 Flash (Medium / Recommended)</option>
+              <option value="gemini-2.5-pro">Gemini 2.5 Pro (Large / Deep Reasoning)</option>
+            </select>
+            <i data-lucide="chevron-down" class="select-chevron"></i>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button id="clear-api-key-btn" class="glass-btn secondary danger-text">Clear Key</button>
+          <div class="right-actions">
+            <button id="test-connection-btn" class="glass-btn secondary">Test Connection</button>
+            <button id="save-settings-btn" class="glass-btn primary">Save & Apply</button>
+          </div>
+        </div>
+        
+        <div id="test-status-msg" class="test-status-message hidden">
+          <!-- Dynamically populated connection test status -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+# Virtual Environment
+venv/
+ENV/
+env/
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Local Database & Instance files
+instance/
+database.db
+*.db
+
+# Local environment secrets
+.env
+backend/.env
+
+# Local User Uploads (Ignore actual uploads but keep directory structure)
+frontend/static/uploads/*
+!frontend/static/uploads/.gitkeep
+
+# IDE configs
+.vscode/
+.idea/
+.DS_Store

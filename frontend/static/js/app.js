@@ -127,13 +127,15 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function updateThemeIcon(theme) {
-    const icon = themeToggleBtn.querySelector("i");
-    if (theme === "dark-theme") {
-      icon.setAttribute("data-lucide", "sun");
-    } else {
-      icon.setAttribute("data-lucide", "moon");
+    const iconName = theme === "dark-theme" ? "sun" : "moon";
+    themeToggleBtn.innerHTML = `<i data-lucide="${iconName}"></i>`;
+    try {
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
+    } catch (e) {
+      console.warn("Lucide icons failed to render:", e);
     }
-    lucide.createIcons();
   }
 
   // --- 2. Database History Tracking ---
@@ -309,8 +311,15 @@ document.addEventListener("DOMContentLoaded", () => {
   toggleKeyVisibility.addEventListener("click", () => {
     const isPassword = apiKeyInput.type === "password";
     apiKeyInput.type = isPassword ? "text" : "password";
-    toggleKeyVisibility.querySelector("i").setAttribute("data-lucide", isPassword ? "eye-off" : "eye");
-    lucide.createIcons();
+    const iconName = isPassword ? "eye-off" : "eye";
+    toggleKeyVisibility.innerHTML = `<i data-lucide="${iconName}"></i>`;
+    try {
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
+    } catch (e) {
+      console.warn("Lucide icons failed to render:", e);
+    }
   });
 
   saveSettingsBtn.addEventListener("click", async () => {

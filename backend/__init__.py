@@ -12,10 +12,14 @@ def create_app():
     Application Factory Pattern for modular Flask app setup.
     Configures folders, CORS, databases, and registers routing blueprints.
     """
+    # Resolve absolute paths to prevent folder resolution bugs in serverless environments
+    backend_dir = os.path.dirname(os.path.abspath(__file__))
+    base_dir = os.path.dirname(backend_dir)
+
     app = Flask(
         __name__,
-        template_folder=os.path.join("..", "frontend", "templates"),
-        static_folder=os.path.join("..", "frontend", "static")
+        template_folder=os.path.join(base_dir, "frontend", "templates"),
+        static_folder=os.path.join(base_dir, "frontend", "static")
     )
     
     # Load configuration settings
